@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Favourite;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
-
 
 class FavouriteController extends Controller
 {
@@ -18,7 +17,7 @@ class FavouriteController extends Controller
         })->get();
 
         return response()->json([
-            'data' => $favouriteProducts
+            'data' => ProductResource::collection($favouriteProducts)
         ], 200);
     }
 }
