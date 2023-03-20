@@ -5,21 +5,21 @@
  */
 
 import './bootstrap';
+import 'bootstrap/dist/css/bootstrap.css';
 import  '../css/app.css';
 import { createRoot } from "react-dom/client";
-import  { BrowserRouter, Router} from 'react-router-dom';
+import {BrowserRouter} from 'react-router-dom';
 import Index from "./components";
 import React from 'react'
 
 
-//const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
-const baseUrl = window.location.href;
+const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 
 root.render(
-  <BrowserRouter basename={"/"}>
-    <Index/>
+  <BrowserRouter>
+    <Index />
   </BrowserRouter>
 );
 
