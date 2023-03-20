@@ -15,8 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/index', [\App\Http\Controllers\ProductController::class, 'index'])->name('product.index');
-Route::get('/favourite/index', [\App\Http\Controllers\FavouriteController::class, 'index'])
-    ->name('favourite.index');
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->group(function () {
+   Route::get('/favourite', [\App\Http\Controllers\FavouriteController::class, 'index']);
+   Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout']);
 });
+   Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login');
+
+
