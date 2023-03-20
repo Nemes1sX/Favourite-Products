@@ -11,9 +11,8 @@ class FavouriteController extends Controller
 {
     public function index(Request $request)
     {
-        $user_id = $request->input('user_id');
-        $favouriteProducts = Product::whereHas('favourites', function (Builder $query) use ($user_id) {
-           $query->where('user_id', $user_id);
+        $favouriteProducts = Product::whereHas('favourites', function (Builder $query)  {
+           $query->where('user_id', auth()->id());
         })->get();
 
         return response()->json([
