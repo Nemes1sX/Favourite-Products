@@ -11,7 +11,7 @@ export default function Products() {
 
     function fetchProducts()
     {
-        axios.get('http://localhost:8000/api/index')
+        axios.get(url + 'api/index')
             .then(response => {
                 const fetchedProducts = response.data.data;
                 setProducts(fetchedProducts);

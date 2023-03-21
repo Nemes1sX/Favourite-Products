@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductFavouriteResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Favourite;
 use App\Models\Product;
@@ -16,12 +17,15 @@ class FavouriteController extends Controller
      */
     public function index()
     {
+        $callback = function($query) {
+            $query->where('user_id', '=', auth()->id());
+        };
         $favouriteProducts = Product::whereHas('favourites', function (Builder $query)  {
             $query->where('user_id', auth()->id());
-        })->get();
+        })->with(['favourites' => $callback])->get();
 
         return response()->json([
-            'data' => ProductResource::collection($favouriteProducts)
+            'data' => ProductResource::collection($favouriteProducts),
         ], 200);
     }
 
@@ -30,11 +34,9 @@ class FavouriteController extends Controller
      */
     public function store(Request $request)
     {
-        //dd(auth()->id());
         $existingFavourite = Favourite::where('user_id', auth()->id())
             ->where('product_id', $request->get('product_id'))
             ->get();
-
 
         if(!$existingFavourite) {
             return response()->json([
@@ -42,15 +44,10 @@ class FavouriteController extends Controller
             ], 400);
         }
 
-        /*Favourite::create([
+        Favourite::create([
            'user_id' => auth()->id(),
            'product_id' => $request->get('product_id')
-        ]);*/
-        $favourite = new Favourite();
-        $favourite->user_id = auth()->id();
-        $favourite->product_id = $request->get('product_id');
-        $favourite->saveOrFail();
-
+        ]);
 
         return response()->json([
             'message' => 'Products added to favourites'
