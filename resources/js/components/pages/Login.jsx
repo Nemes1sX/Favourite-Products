@@ -1,14 +1,27 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState, useForm} from 'react';
+import AuthService from "../../services/AuthService";
+import {useNavigate} from "react-router-dom";
 
 export default function Login() {
-    const [loginUser, setLoginUser] = useState({
-        'email': '',
-        'password': ''
-    });
+    const navigate = useNavigate();
     const [errors, setErrors] = useState([]);
+    const [token, setToken] = useState(AuthService.getToken());
 
-    function authUser() {
-        console.log('Hello');
+    useEffect( () => {
+      if (token) {
+          navigate('/favourite');
+      }
+    }, []);
+
+    function authUser(event) {
+        event.preventDefault();
+        let data = new FormData(event.target);
+        data = JSON.stringify(Object.fromEntries(data));
+        AuthService.login(data).then(() => {
+            navigate('/favourite');
+            window.location.reload();
+        });
+        console.log(data);
     }
 
 return (
@@ -41,8 +54,7 @@ return (
 
                                 <div className="row mb-3">
                                     <label htmlFor="password"
-                                           className="col-md-4 col-form-label text-md">Password</label>
-
+                                           className="col-md-4 col-form-label text-md-end">Password</label>
                                     <div className="col-md-6">
                                         <input id="password" type="password"
                                                className="form-control"
