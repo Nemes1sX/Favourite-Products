@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductResource extends JsonResource
+class FavouriteResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,10 +16,8 @@ class ProductResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'description' => $this->description,
-            'price' => round($this->price / 100, 2),
-            'favourite' => FavouriteResource::collection($this->whenLoaded('favourites'))
+            'user_id' => $this->user_id,
+            'product_id' => $this->product_id
         ];
     }
 }
