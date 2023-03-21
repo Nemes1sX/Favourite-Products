@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/index', [\App\Http\Controllers\ProductController::class, 'index'])->name('product.index');
 Route::middleware('auth:api')->group(function () {
-   Route::get('/favourite', [\App\Http\Controllers\FavouriteController::class, 'index']);
+   Route::resource('favourite', \App\Http\Controllers\FavouriteController::class)
+       ->only('index', 'store', 'destroy');
    Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout']);
 });
    Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login');
