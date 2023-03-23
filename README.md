@@ -7,6 +7,8 @@ Laravel passport
 * PHP version >=8.1 and NodeJs 18.15.0
 
 ##Installation instructions
+* Made .env file with cmd terminal in the project folder ```copy .env.example .env```
+* Made app key ```php artisan key:generate```
 * Migrate ```php artisan migrate```
 * Install passport ```php artisan passport:install```
 * Deploying passport keys ```php artisan passport:keys```
