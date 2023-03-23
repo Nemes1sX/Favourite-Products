@@ -2,19 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ProductResource;
 use App\Models\Favourite;
-use App\Repositories\IProductRepository;
 use Illuminate\Http\Request;
+use App\Http\Resources\ProductResource;
+use App\Repositories\IProductRepository;
 
 class FavouriteController extends Controller
 {
+    private IProductRepository $productRepository;
+
+    public function __construct(IProductRepository $productRepository)
+    {
+        $this->productRepository = $productRepository;
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index(IProductRepository $productRepository)
+    public function index()
     {
-        $favouriteProducts = $productRepository->GetUserFavouriteProducts();
+        $favouriteProducts = $this->productRepository->GetUserFavouriteProducts();
 
         return response()->json([
             'data' => ProductResource::collection($favouriteProducts),
@@ -27,10 +34,8 @@ class FavouriteController extends Controller
     public function store(Request $request)
     {
         $existingFavourite = Favourite::where(
-            ['user_id' => auth()->id(),
-            'product_id' => $request->get('product_id')])
+            ['user_id' => auth()->id(), 'product_id' => $request->product_id])
             ->count();
-
         if($existingFavourite > 0) {
             return response()->json([
                 'error' => 'Product is already added to favourites'
@@ -38,8 +43,8 @@ class FavouriteController extends Controller
         }
 
         Favourite::create([
-           'user_id' => auth()->id(),
-           'product_id' => $request->get('product_id')
+            'user_id' => auth()->id(),
+            'product_id' => $request->product_id
         ]);
 
         return response()->json([
@@ -66,7 +71,7 @@ class FavouriteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
         $favourite = Favourite::find($id);
         if(!$favourite) {

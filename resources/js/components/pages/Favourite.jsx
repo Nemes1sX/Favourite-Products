@@ -8,6 +8,7 @@ export default function Favourite() {
     const navigate = useNavigate();
     const [favouriteProducts, setFavouriteProducts] = useState([]);
     const [error, setError] = useState();
+    const [success, setSuccess] = useState();
     const [token, setToken] = useState(AuthService.getToken());
 
     useEffect(() => {
@@ -27,6 +28,7 @@ export default function Favourite() {
                 }
             )
             .catch(error => {
+                console.log(error);
                 if (error.response.status === 401) {
                     alert(error.response.data.error);
                 }
@@ -38,10 +40,12 @@ export default function Favourite() {
             headers: AuthHeader()
         })
             .then(response => response.data.message)
-            .then(() => {
+            .then( message  => {
                fetchFavouriteProducts();
+               setSuccess(message);
             })
             .catch(error => {
+                console.log(error);
                 if (error.response.status === 401) {
                     setError(error.response.data.error);
                 }
@@ -53,6 +57,11 @@ export default function Favourite() {
             <div className="container">
                 <div className="row">
                     <h1 className="text-center">Favourite products</h1>
+                    {success &&
+                        <div className="alert alert-success" role="alert">
+                            {success}
+                        </div>
+                    }
                     {error &&
                         <div className="alert alert-danger" role="alert">
                             {error}
