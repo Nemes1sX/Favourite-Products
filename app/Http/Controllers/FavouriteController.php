@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\ProductFavouriteResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Favourite;
-use App\Models\Product;
-use Illuminate\Database\Eloquent\Builder;
+use App\Repositories\IProductRepository;
 use Illuminate\Http\Request;
 
 class FavouriteController extends Controller
@@ -15,14 +12,9 @@ class FavouriteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(IProductRepository $productRepository)
     {
-        $callback = function($query) {
-            $query->where('user_id', '=', auth()->id());
-        };
-        $favouriteProducts = Product::whereHas('favourites', function (Builder $query)  {
-            $query->where('user_id', auth()->id());
-        })->with(['favourites' => $callback])->get();
+        $favouriteProducts = $productRepository->GetUserFavouriteProducts();
 
         return response()->json([
             'data' => ProductResource::collection($favouriteProducts),
@@ -34,13 +26,14 @@ class FavouriteController extends Controller
      */
     public function store(Request $request)
     {
-        $existingFavourite = Favourite::where('user_id', auth()->id())
-            ->where('product_id', $request->get('product_id'))
-            ->get();
+        $existingFavourite = Favourite::where(
+            ['user_id' => auth()->id(),
+            'product_id' => $request->get('product_id')])
+            ->count();
 
-        if(!$existingFavourite) {
+        if($existingFavourite > 0) {
             return response()->json([
-                'message' => 'Product is already added to favourites'
+                'error' => 'Product is already added to favourites'
             ], 400);
         }
 
