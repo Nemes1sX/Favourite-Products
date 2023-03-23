@@ -15,8 +15,8 @@ class LoginController extends Controller
         $user = User::where('email', $credentials['email'])->get();
         if(!$user) {
             return response()->json([
-                'error' => "user don't exist"
-            ], 422);
+                'error' => "User don't exist"
+            ], 401);
         }
         if (!auth()->attempt($credentials)) {
             return response()->json(['error' => 'Invalid password or username'], 401);
@@ -31,7 +31,7 @@ class LoginController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'msg' => 'Logged out Successfully.'
+            'message' => 'Logged out Successfully.'
         ], 200);
     }
 }

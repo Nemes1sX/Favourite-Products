@@ -1,26 +1,25 @@
-const API_URL = "http://localhost:8000/api/";
+import axios from "axios";
+import AuthHeader from "./auth-header";
+
+const API_URL =  window.location.href + "api/";
+const headersJson = {
+    'Accept': 'application/json, text/plain',
+    'Content-Type': 'application/json;charset=UTF-8'
+};
 
 class AuthService {
-    login(data) {
-        console.log(data);
-        const headersJson = {
-            'Accept': 'application/json, text/plain',
-            'Content-Type': 'application/json;charset=UTF-8'
-        };
-        return axios
-            .post(API_URL + "login", data, {
-                headers: headersJson
-            })
-            .then(response => {
-                if (response.data.access_token) {
-                    localStorage.setItem("access_token", JSON.stringify(response.data.access_token));
-                }
-
-                return response.data.access_token;
-            });
-    }
 
     logout() {
+        axios
+            .post(API_URL + "logout", '',{
+                headers:  [headersJson, AuthHeader()]
+            })
+            .then(response => response.data.message)
+            .catch(error => {
+                if (error.status === 401) {
+                    alert(error.message);
+                }
+            })
         localStorage.removeItem("access_token");
     }
 
