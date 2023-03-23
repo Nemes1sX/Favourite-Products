@@ -6,6 +6,7 @@
 
 import './bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
+import 'font-awesome/css/font-awesome.min.css';
 import  '../css/app.css';
 import { createRoot } from "react-dom/client";
 import {BrowserRouter} from 'react-router-dom';

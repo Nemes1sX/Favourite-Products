@@ -1,12 +1,22 @@
 import React, {useState} from 'react';
-import {Link, NavLink} from "react-router-dom";
+import {Link, NavLink, useNavigate} from "react-router-dom";
 import {Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem} from "reactstrap";
+import AuthService from "../services/AuthService";
 
 export default function NavMenu() {
+    const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState(true);
+    const [token, setToken] = useState(AuthService.getToken());
 
     function toggleNavbar() {
         setCollapsed(false);
+    }
+
+
+    function logout() {
+        AuthService.logout();
+        navigate("/login");
+        window.location.reload();
     }
 
     return (
@@ -19,9 +29,22 @@ export default function NavMenu() {
                       <NavItem>
                           <NavLink tag={Link} className="text-dark menu-gap" to="/">Home</NavLink>
                       </NavItem>
-                      <NavItem>
-                          <NavLink tag={Link} className="text-dark " to="/favourites">Favourite products</NavLink>
-                      </NavItem>
+                      {   token &&
+                          <NavItem>
+                              <NavLink tag={Link} className="text-dark menu-gap" to="/favourite">Favourite products</NavLink>
+                          </NavItem>
+                      }
+                      {
+                          token &&
+                          <NavItem>
+                            <NavLink tag={Link} className="text-dark menu-gap" onClick={logout}>Logout</NavLink>
+                          </NavItem>
+                      }
+                      {   !token &&
+                          <NavItem>
+                          <NavLink tag={Link} className="text-dark menu-gap" to="/login">Login</NavLink>
+                          </NavItem>
+                      }
                   </ul>
               </Collapse>
           </Navbar>

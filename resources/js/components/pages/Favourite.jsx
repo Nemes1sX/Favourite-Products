@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 export default function Favourite() {
     const navigate = useNavigate();
     const [favouriteProducts, setFavouriteProducts] = useState([]);
+    const [error, setError] = useState();
     const [token, setToken] = useState(AuthService.getToken());
 
     useEffect(() => {
@@ -23,9 +24,13 @@ export default function Favourite() {
             .then(response => response.data.data)
             .then(data => {
                     setFavouriteProducts(data);
-                    console.log(data);
                 }
-            );
+            )
+            .catch(error => {
+                if (error.response.status === 401) {
+                    alert(error.response.data.error);
+                }
+            });
     }
 
     function removeFromFavourite(id) {
@@ -35,6 +40,11 @@ export default function Favourite() {
             .then(response => response.data.message)
             .then(() => {
                fetchFavouriteProducts();
+            })
+            .catch(error => {
+                if (error.response.status === 401) {
+                    setError(error.response.data.error);
+                }
             });
     }
 
@@ -43,6 +53,11 @@ export default function Favourite() {
             <div className="container">
                 <div className="row">
                     <h1 className="text-center">Favourite products</h1>
+                    {error &&
+                        <div className="alert alert-danger" role="alert">
+                            {error}
+                        </div>
+                    }
                     {
                         favouriteProducts.length > 0 &&
                         favouriteProducts.map((product, key) =>
@@ -50,10 +65,10 @@ export default function Favourite() {
                                 <div className="card h-100">
                                     <div className="card-body">
                                         <h4 className="card-title">
-                                            <a href="#">{product.name}</a>
+                                            {product.name}
                                         </h4>
-                                        <h5>$ {product.price}</h5>
                                         <p className="card-text">{product.description}</p>
+                                        <h5>$ {product.price}</h5>
                                         <div className="btn-group">
                                             <button className="btn btn-danger" onClick={() => removeFromFavourite(product.favourite[0].id)}>
                                                 Remove <i className="fa fa-heart"></i>
